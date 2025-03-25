@@ -1,0 +1,30 @@
+# Web interface
+streamlit>=1.26.0
+
+# Computer Vision and Image Processing
+opencv-python>=4.10.0
+Pillow>=10.1.0
+ultralytics
+
+# Scientific Computing
+numpy>=1.26.4
+
+# Deep Learning
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Model Download and Progress Bar
+requests>=2.31.0
+tqdm
+
+# Logging
+python-json-logger
+
+
+# Production Deployment
+gunicorn>=21.2.0
+uvicorn>=0.23.0
+
+# Optional: GPU Support
+# torch>=2.0.0+cu117  # Uncomment for CUDA 11.7
+# torchvision>=0.15.0+cu117  # Uncomment for CUDA 11.7
