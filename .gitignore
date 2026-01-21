@@ -41,3 +41,12 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+IMPLEMENTATION_SUMMARY.md
+tasks.md
+test_implementation.py
+BUG_FIX_SUMMARY.md
+yolo26n-cls.pt
+test_models.py
+yolo26n.pt
+yolo26n-seg.pt
