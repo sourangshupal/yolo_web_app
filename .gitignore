@@ -50,3 +50,4 @@ yolo26n-cls.pt
 test_models.py
 yolo26n.pt
 yolo26n-seg.pt
+.claude
