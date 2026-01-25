@@ -1,0 +1,40 @@
+# FastAPI Dockerfile for YOLO26 API
+FROM ultralytics/ultralytics:latest-cpu
+
+WORKDIR /app
+
+# Install system dependencies for OpenCV
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgl1-mesa-glx \
+    libxcb1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements files
+COPY requirements.txt .
+COPY requirements-api.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-api.txt
+
+# Copy application files
+COPY simple_yolo_detector.py .
+COPY config.py .
+COPY fastapi_app.py .
+COPY api_utils.py .
+COPY api_schemas.py .
+COPY static/ ./static/
+
+# Create necessary directories
+RUN mkdir -p models logs pred_images static
+
+# Expose FastAPI port
+EXPOSE 8000
+
+# Run FastAPI application with uvicorn
+CMD ["uvicorn", "fastapi_app:app", "--host", "0.0.0.0", "--port", "8000"]

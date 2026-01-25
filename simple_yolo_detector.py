@@ -36,8 +36,15 @@ class SimpleYOLODetector:
         self.model_path = models_dir / model_name
 
         # Load model (Ultralytics will auto-download if not found)
-        self.model = YOLO(str(self.model_path))
-        self.classes = self.model.names if hasattr(self.model, "names") else {}
+        try:
+            self.model = YOLO(str(self.model_path))
+            self.classes = self.model.names if hasattr(self.model, "names") else {}
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to load model {model_name}: {str(e)}\n"
+                f"Model path: {self.model_path}\n"
+                f"Ensure model file exists or download URL is accessible."
+            )
 
     def detect_objects(self, image: np.ndarray) -> Tuple[np.ndarray, List[Dict[str, Union[List[int], str, float]]]]:
         """

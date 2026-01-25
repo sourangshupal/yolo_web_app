@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Virtual environments (CRITICAL - saves 1.1GB)
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Git
+.git/
+.gitignore
+
+# Models - exclude larger models (keep only nano in image, others download on demand)
+models/yolo26s.pt
+models/yolo26s-seg.pt
+models/yolo26s-cls.pt
+models/yolo26m.pt
+models/yolo26m-seg.pt
+models/yolo26m-cls.pt
+models/yolo26m_detect.pt
+models/yolo26m_segment.pt
+models/yolo26m_classify.pt
+models/yolo26l.pt
+models/yolo26l-seg.pt
+models/yolo26l-cls.pt
+models/yolo26x.pt
+models/yolo26x-seg.pt
+models/yolo26x-cls.pt
+
+# Predictions
+pred_images/
+
+# Test files
+test_*.jpg
+test_*.png
+sample_*.jpg
+sample_*.png
+
+# Documentation
+*.md
+!README.md
+API_README.md
+FASTAPI_IMPLEMENTATION_SUMMARY.md
+
+# FastAPI files (separate service)
+# COMMENTED OUT - these files are needed for FastAPI Docker build
+# To build Streamlit only, use: docker build -f Dockerfile
+# To build FastAPI, use: docker build -f Dockerfile.api
+# Dockerfile.api
+# requirements-api.txt
+# fastapi_app.py
+# api_utils.py
+# api_schemas.py
+# static/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -21,7 +21,7 @@ task = st.sidebar.selectbox(
 model_size = st.sidebar.selectbox(
     "Select Model Size",
     ["nano", "small", "medium", "large", "xlarge"],
-    index=2,
+    index=0,  # Changed from 2 to 0 (nano instead of medium) for faster AWS startup
     help="Model size - smaller is faster, larger is more accurate"
 )
 
@@ -50,7 +50,12 @@ elif task == "classify":
 @st.cache_resource
 def load_model(task_type, size):
     """Load and cache YOLO model."""
-    return SimpleYOLODetector(task=task_type, model_size=size)
+    with st.spinner(f"Loading {size} model for {task_type}... (may download if not cached)"):
+        try:
+            return SimpleYOLODetector(task=task_type, model_size=size)
+        except Exception as e:
+            st.error(f"Failed to load model: {str(e)}")
+            raise
 
 
 # Force reload when task changes

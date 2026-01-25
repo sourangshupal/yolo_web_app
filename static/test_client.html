@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO26 API Test Client</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group input[type="number"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #f0f4ff;
+            border-color: #764ba2;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            grid-column: 1 / -1;
+        }
+
+        .results-content {
+            display: none;
+        }
+
+        .results-content.active {
+            display: block;
+        }
+
+        .result-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metadata-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .metadata-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metadata-value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detections-list {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .detection-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detection-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .detection-confidence {
+            color: #667eea;
+            margin-left: 10px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #c33;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .results {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 YOLO26 API Test Client</h1>
+            <p>Upload an image and test object detection, segmentation, or classification</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>⚙️ Configuration</h2>
+
+                <div class="form-group">
+                    <label for="task">Task Type</label>
+                    <select id="task">
+                        <option value="detect">🔍 Object Detection</option>
+                        <option value="segment">🎨 Instance Segmentation</option>
+                        <option value="classify">🏷️ Image Classification</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="model_size">Model Size</label>
+                    <select id="model_size">
+                        <option value="nano">Nano (Fastest)</option>
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium (Balanced)</option>
+                        <option value="large">Large</option>
+                        <option value="xlarge">X-Large (Most Accurate)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="topk-group" style="display: none;">
+                    <label for="topk">Top K Predictions</label>
+                    <input type="number" id="topk" value="5" min="1" max="10">
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Image</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="file" accept="image/jpeg,image/png,image/webp">
+                        <label for="file" class="file-input-label">
+                            📁 Click to select image<br>
+                            <small>Supported: JPEG, PNG, WebP</small>
+                        </label>
+                    </div>
+                    <div class="file-name" id="file-name"></div>
+                </div>
+
+                <button class="btn" id="submit-btn" onclick="processImage()">
+                    🎯 Process Image
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #667eea; font-weight: 600;">Processing...</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>ℹ️ Information</h2>
+                <div style="color: #555; line-height: 1.8;">
+                    <p style="margin-bottom: 15px;"><strong>How to use:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Select a task type (detect, segment, or classify)</li>
+                        <li>Choose model size (larger = more accurate but slower)</li>
+                        <li>Upload an image file</li>
+                        <li>Click "Process Image" to run inference</li>
+                    </ol>
+
+                    <p style="margin-top: 20px; margin-bottom: 10px;"><strong>Task Descriptions:</strong></p>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li><strong>Detection:</strong> Finds objects and draws bounding boxes</li>
+                        <li><strong>Segmentation:</strong> Finds objects with pixel-level masks</li>
+                        <li><strong>Classification:</strong> Identifies the main subject of the image</li>
+                    </ul>
+
+                    <p style="margin-top: 20px;">
+                        <strong>API Documentation:</strong><br>
+                        <a href="/docs" style="color: #667eea;">Interactive Swagger UI →</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="section results" id="results">
+                <h2>📊 Results</h2>
+                <div id="error-message"></div>
+                <div class="results-content" id="results-content">
+                    <img id="result-image" class="result-image" alt="Result">
+
+                    <div class="metadata">
+                        <div class="metadata-item">
+                            <div class="metadata-label">Processing Time</div>
+                            <div class="metadata-value" id="processing-time">-</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Model Size</div>
+                            <div class="metadata-value" id="result-model-size">-</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Task Type</div>
+                            <div class="metadata-value" id="result-task">-</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Results Found</div>
+                            <div class="metadata-value" id="result-count">-</div>
+                        </div>
+                    </div>
+
+                    <div class="detections-list">
+                        <h3 style="margin-bottom: 15px; color: #333;">Detections</h3>
+                        <div id="detections"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show/hide topk input based on task
+        document.getElementById('task').addEventListener('change', function() {
+            const topkGroup = document.getElementById('topk-group');
+            topkGroup.style.display = this.value === 'classify' ? 'block' : 'none';
+        });
+
+        // Show selected filename
+        document.getElementById('file').addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : '';
+            document.getElementById('file-name').textContent = fileName ? `Selected: ${fileName}` : '';
+        });
+
+        async function processImage() {
+            const fileInput = document.getElementById('file');
+            const task = document.getElementById('task').value;
+            const modelSize = document.getElementById('model_size').value;
+            const topk = document.getElementById('topk').value;
+
+            // Validate file selection
+            if (!fileInput.files || !fileInput.files[0]) {
+                showError('Please select an image file');
+                return;
+            }
+
+            // Show loading, hide results
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results-content').classList.remove('active');
+            document.getElementById('error-message').innerHTML = '';
+
+            // Build form data
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('model_size', modelSize);
+
+            if (task === 'classify') {
+                formData.append('topk', topk);
+            }
+
+            try {
+                // Call API
+                const response = await fetch(`/api/v1/${task}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.detail || 'Request failed');
+                }
+
+                // Display results
+                displayResults(result);
+
+            } catch (error) {
+                showError(`Error: ${error.message}`);
+            } finally {
+                document.getElementById('submit-btn').disabled = false;
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        function displayResults(result) {
+            // Show results section
+            document.getElementById('results-content').classList.add('active');
+
+            // Display image
+            document.getElementById('result-image').src = result.image.base64;
+
+            // Display metadata
+            document.getElementById('processing-time').textContent =
+                `${result.processing_time_ms.toFixed(1)} ms`;
+            document.getElementById('result-model-size').textContent =
+                result.model_size;
+            document.getElementById('result-task').textContent =
+                result.task;
+            document.getElementById('result-count').textContent =
+                result.results.length;
+
+            // Display detections
+            const detectionsDiv = document.getElementById('detections');
+            detectionsDiv.innerHTML = '';
+
+            if (result.results.length === 0) {
+                detectionsDiv.innerHTML = '<p style="color: #999; font-style: italic;">No results found</p>';
+            } else {
+                result.results.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'detection-item';
+
+                    const confidence = (item.confidence * 100).toFixed(1);
+                    const confidenceClass = 'detection-confidence';
+
+                    div.innerHTML = `
+                        <span class="detection-label">${index + 1}. ${item.label}</span>
+                        <span class="${confidenceClass}">${confidence}%</span>
+                    `;
+
+                    detectionsDiv.appendChild(div);
+                });
+            }
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = `<div class="error">${message}</div>`;
+        }
+    </script>
+</body>
+</html>

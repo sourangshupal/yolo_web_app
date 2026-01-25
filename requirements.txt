@@ -4,14 +4,14 @@ streamlit
 # Computer Vision and Image Processing
 opencv-python
 Pillow
-ultralytics
+#ultralytics
 
 # Scientific Computing
-numpy
+#numpy
 
 # Deep Learning
-torch
-torchvision
+#torch
+#torchvision
 
 # Model Download and Progress Bar
 requests
@@ -26,5 +26,5 @@ gunicorn
 uvicorn
 
 # Optional: GPU Support
-torch
-torchvision
+# torch
+# torchvision
