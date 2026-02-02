@@ -12,7 +12,7 @@ RUN mkdir -p ~/.streamlit/ && \
 port = 8501\n\
 address = '0.0.0.0'\n\
 headless = true\n\
-enableCORS = false\n\
+enableCORS = true\n\
 maxUploadSize = 200\n\
 \n\
 [browser]\n\
